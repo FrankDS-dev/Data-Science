@@ -1,13 +1,23 @@
 import os
 import pandas as pd
+import numpy as np
+import matplotlib
+matplotlib.use('Agg') # Non-interactive backend for server rendering
+import matplotlib.pyplot as plt
+import seaborn as sns
+
 from flask import Flask, render_template, request, redirect, url_for
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, classification_report
 
 app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
+STATIC_FOLDER = 'static'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(STATIC_FOLDER, exist_ok=True)
 
 @app.route('/')
 def home():
@@ -26,87 +36,141 @@ def analyze():
         filepath = os.path.join(UPLOAD_FOLDER, file.filename)
         file.save(filepath)
 
-        # Lectura del Dataset con Pandas
         try:
             df = pd.read_csv(filepath)
         except Exception as e:
-            return f"Error al leer el archivo CSV: {e}"
+            return f"Error reading CSV file: {e}"
 
-        # 1. EDA Básico y Estadísticas de Negocio
+        # --- 1. STRUCTURAL EDA & DATA HEALTH ---
         num_rows, num_cols = df.shape
-        missing_values = df.isnull().sum().to_dict()
+        missing_data = df.isnull().sum()
+        missing_pct = (missing_data / num_rows) * 100
+        health_df = pd.DataFrame({'Missing Values': missing_data, 'Percentage (%)': missing_pct})
+        health_html = health_df[health_df['Missing Values'] > 0].to_html(classes='table table-striped', border=0) if health_df['Missing Values'].sum() > 0 else "<p>No missing values detected. High data quality.</p>"
+
         summary_stats = df.describe().to_html(classes='table table-striped', border=0)
 
-        # 2. Machine Learning Automático (Random Forest si hay variables aptas)
-        ml_insights = "No se pudo entrenar un modelo predictivo automáticamente (se requiere al menos una columna numérica y una variable objetivo categórica o numérica)."
+        # --- 2. GENERATE ADVANCED CHARTS ---
+        # Correlation Heatmap
+        plt.figure(figsize=(8, 5))
+        numeric_df = df.select_dtypes(include=['number'])
+        plots_html = ""
 
-        # Intentar buscar una columna objetivo lógica (ej. la última columna o una binaria)
+        if not numeric_df.empty and numeric_df.shape[1] >= 2:
+            corr = numeric_df.corr()
+            sns.heatmap(corr, annot=True, cmap='Blues', fmt='.2f', linewidths=0.5)
+            plt.title('Feature Correlation Matrix', fontsize=14)
+            plt.tight_layout()
+            corr_path = os.path.join(STATIC_FOLDER, 'correlation_matrix.png')
+            plt.savefig(corr_path)
+            plt.close()
+            plots_html += f'<h4>Correlation Heatmap</h4><img src="{url_for("static", filename="correlation_matrix.png")}" class="img-fluid" alt="Correlation Matrix"><br><br>'
+
+        # --- 3. MACHINE LEARNING (Random Forest & KNN) ---
+        ml_report = "<p>Dataset structure does not fit standard supervised ML criteria (requires numeric features and a target variable).</p>"
+
         try:
-            if num_cols >= 2 and num_rows > 10:
-                X = df.select_dtypes(include=['number']).dropna()
-                if X.shape[1] >= 2:
-                    # Tomamos la última columna numérica como target simulado para demostración
-                    target_col = X.columns[-1]
-                    feature_cols = X.columns[:-1]
+            if numeric_df.shape[1] >= 3 and num_rows > 15:
+                # Target selection: Automatically pick the last numeric column as target, binarized by median
+                target_col = numeric_df.columns[-1]
+                feature_cols = numeric_df.columns[:-1]
 
-                    y = X[target_col] > X[target_col].median() # Convertir en binario para clasificación
-                    X_subset = X[feature_cols]
+                clean_data = numeric_df.dropna()
+                X = clean_data[feature_cols]
+                y = (clean_data[target_col] > clean_data[target_col].median()).astype(int)
 
-                    X_train, X_test, y_train, y_test = train_test_split(X_subset, y, test_size=0.2, random_state=42)
+                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
 
-                    model = RandomForestClassifier(n_estimators=50, random_state=42)
-                    model.fit(X_train, y_train)
-                    acc = model.score(X_test, y_test)
+                # Scale data for KNN
+                scaler = StandardScaler()
+                X_train_scaled = scaler.fit_transform(X_train)
+                X_test_scaled = scaler.transform(X_test)
 
-                    feature_importances = dict(zip(feature_cols, model.feature_importances_))
+                # Random Forest
+                rf = RandomForestClassifier(n_estimators=100, random_state=42)
+                rf.fit(X_train, y_train)
+                rf_pred = rf.predict(X_test)
+                rf_acc = accuracy_score(y_test, rf_pred)
 
-                    ml_insights = f"""
-                    <h4>Modelo Entrenado Automáticamente: Random Forest Classifier</h4>
+                # KNN
+                knn = KNeighborsClassifier(n_neighbors=5)
+                knn.fit(X_train_scaled, y_train)
+                knn_pred = knn.predict(X_test_scaled)
+                knn_acc = accuracy_score(y_test, knn_pred)
+
+                # Feature Importances plot for Random Forest
+                importances = pd.Series(rf.feature_importances_, index=feature_cols).sort_values(ascending=False)
+                plt.figure(figsize=(8, 4))
+                importances.plot(kind='bar', color='#2563eb')
+                plt.title('Random Forest - Feature Importance', fontsize=14)
+                plt.ylabel('Importance Score')
+                plt.tight_layout()
+                fi_path = os.path.join(STATIC_FOLDER, 'feature_importance.png')
+                plt.savefig(fi_path)
+                plt.close()
+
+                plots_html += f'<h4>Random Forest Feature Importance</h4><img src="{url_for("static", filename="feature_importance.png")}" class="img-fluid" alt="Feature Importance"><br><br>'
+
+                ml_report = f"""
+                <div class="alert alert-info">
+                    <h4>🤖 Advanced Machine Learning Benchmark</h4>
                     <ul>
-                        <li><strong>Variable Objetivo Simulada:</strong> {target_col} (mediana dividida)</li>
-                        <li><strong>Precisión del Modelo (Accuracy):</strong> {acc:.2f}</li>
-                        <li><strong>Importancia de Variables (Feature Importance):</strong> {feature_importances}</li>
+                        <li><strong>Target Variable (Simulated Binary Split):</strong> <code>{target_col}</code> (Split at median)</li>
+                        <li><strong>Random Forest Accuracy:</strong> <strong>{rf_acc * 100:.2f}%</strong></li>
+                        <li><strong>K-Nearest Neighbors (KNN) Accuracy:</strong> <strong>{knn_acc * 100:.2f}%</strong></li>
                     </ul>
-                    """
+                    <p><strong>Top Predictive Drivers:</strong></p>
+                    <ul>
+                        <li>Primary driver: <code>{importances.index[0]}</code> (Score: {importances.iloc[0]:.4f})</li>
+                        {f"<li>Secondary driver: <code>{importances.index[1]}</code> (Score: {importances.iloc[1]:.4f})</li>" if len(importances) > 1 else ""}
+                    </ul>
+                </div>
+                """
         except Exception as ml_err:
-            ml_insights = f"Modelo no aplicable a la estructura de este dataset específico: {ml_err}"
+            ml_report = f"<p>Could not execute full ML pipeline due to feature constraints: {ml_err}</p>"
 
-        # Renderizar resultados en un Dashboard HTML dinámico
+        # --- 4. RENDER DEEP ANALYTICAL DASHBOARD ---
         return f"""
         <!DOCTYPE html>
-        <html lang="es">
+        <html lang="en">
         <head>
             <meta charset="UTF-8">
-            <title>Business & Data Science Dashboard</title>
+            <title>Executive Data Science & Business Intelligence Dashboard</title>
             <link rel="stylesheet" href="{url_for('static', filename='style.css')}">
             <style>
-                body {{ padding: 20px; background: #f8fafc; }}
-                .dash-container {{ max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }}
-                table {{ width: 100%; border-collapse: collapse; margin-top: 15px; }}
-                th, td {{ padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }}
-                .back-btn {{ display: inline-block; margin-top: 20px; padding: 10px 20px; background: #2563eb; color: white; text-decoration: none; border-radius: 5px; }}
+                body {{ padding: 30px; background: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }}
+                .dash-container {{ max-width: 1000px; margin: auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 25px; }}
+                th, td {{ padding: 10px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 0.95rem; }}
+                th {{ background-color: #1e293b; color: white; }}
+                .img-fluid {{ max-width: 100%; height: auto; border-radius: 6px; border: 1px solid #cbd5e1; }}
+                .back-btn {{ display: inline-block; margin-top: 30px; padding: 12px 25px; background: #2563eb; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; }}
+                .back-btn:hover {{ background: #1d4ed8; }}
             </style>
         </head>
         <body>
             <div class="dash-container">
-                <h1>📊 Automated Business Intelligence Dashboard</h1>
-                <p><strong>Archivo analizado:</strong> {file.filename}</p>
+                <h1>📊 Executive Business & Data Science Insights</h1>
+                <p><strong>Analyzed Dataset:</strong> {file.filename} | <strong>Total Observations:</strong> {num_rows:,} rows | <strong>Features:</strong> {num_cols} columns</p>
                 <hr>
 
-                <h3>1. Resumen Estructural (EDA)</h3>
+                <h3>1. Structural EDA & Data Health Audit</h3>
                 <ul>
-                    <li><strong>Total de Filas (Registros):</strong> {num_rows}</li>
-                    <li><strong>Total de Columnas (Variables):</strong> {num_cols}</li>
+                    <li><strong>Dataset Dimensionality:</strong> {num_rows} rows and {num_cols} columns.</li>
+                    <li><strong>Missing Values Inspection:</strong> Checked across all attributes. Clean datasets improve operational forecasting accuracy.</li>
                 </ul>
+                {health_html}
 
-                <h3>2. Estadísticas Descriptivas</h3>
+                <h3>2. Statistical Summary & Variance Analysis</h3>
                 {summary_stats}
 
-                <h3>3. Machine Learning Insights</h3>
-                {ml_insights}
+                <h3>3. Visual Data Analysis & Correlations</h3>
+                {plots_html}
 
-                <br>
-                <a href="/" class="back-btn">← Volver al Portafolio</a>
+                <h3>4. Predictive Modeling & Business Intelligence Insights</h3>
+                {ml_report}
+
+                <a href="/" class="back-btn">← Back to Portfolio</a>
             </div>
         </body>
         </html>

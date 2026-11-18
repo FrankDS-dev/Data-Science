@@ -1,67 +1,130 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Francisco López | Data Science & Operations Portfolio</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Google Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- HEADER / PRESENTACIÓN -->
+    <!-- BACKGROUND GLOW EFFECTS -->
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <span class="logo">FL<span class="dot">.</span></span>
+            <div class="nav-links">
+                <a href="#about">About</a>
+                <a href="#projects">Projects</a>
+                <a href="#try-skills" class="nav-cta">Try my Skills!</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
     <header class="hero">
-        <div class="container">
-            <h1>Francisco López</h1>
-            <h2>Operations Management & Data Science Portfolio</h2>
-            <p>Economics graduate with a Finance background, combining robust operational leadership (Budgets of $100k-$200k, 200+ indirect reports at Teleperformance, NIQ neuroscience projects) with advanced data-driven analytical skills.</p>
-            <div class="contact-info">
-                <span>📧 frankelquedoy@outlook.com</span> |
-                <span>📱 +52 55 4387 6402</span> |
-                <span>📍 México (Remote)</span>
+        <div class="hero-content">
+            <div class="badge"><i class="fa-solid fa-chart-line"></i> Operations & Data Science</div>
+            <h1>Transforming Complex Data into <span class="gradient-text">Business Impact</span></h1>
+            <p>Economics graduate & Operations Manager with deep expertise in forecasting, $100k-$200k monthly budgets, and advanced machine learning modeling (Python, Scikit-Learn, Pandas).</p>
+
+            <div class="hero-buttons">
+                <a href="#try-skills" class="btn btn-primary"><i class="fa-solid fa-wand-magic-sparkles"></i> Try my Skills!</a>
+                <a href="mailto:frankelquedoy@outlook.com" class="btn btn-secondary"><i class="fa-regular fa-envelope"></i> Contact Me</a>
+            </div>
+
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <h3>$200k</h3>
+                    <p>Max Monthly Budgets</p>
+                </div>
+                <div class="stat-item">
+                    <h3>200+</h3>
+                    <p>Indirect Reports Led</p>
+                </div>
+                <div class="stat-item">
+                    <h3>100%</h3>
+                    <p>Data-Driven Execution</p>
+                </div>
             </div>
         </div>
     </header>
 
     <main class="container">
-        <!-- SECCIÓN DE COMPETENCIAS Y EXPERIENCIA -->
-        <section class="card">
-            <h3>Core Competencies & Technology</h3>
-            <p><strong>Data & Programming:</strong> Python (Pandas, Matplotlib, Seaborn, Scikit-learn, Sweetviz), R/RStudio, JavaScript, HTML, PHP.</p>
-            <p><strong>Operations:</strong> Forecasting, Budget Tracking, Resource Planning, Lean Six Sigma Yellow Belt, CX Strategy, KPIs.</p>
+        <!-- ABOUT / CORE COMPETENCIES -->
+        <section id="about" class="card fade-in">
+            <h3><i class="fa-solid fa-user-gear"></i> Professional Background</h3>
+            <p>Operations professional with a robust career progression at Teleperformance (up to Operations Manager) and NIQ. Combining executive leadership in demanding bilingual environments with a data-driven analytical mindset.</p>
+            <div class="tech-tags">
+                <span>Python</span>
+                <span>Pandas</span>
+                <span>Scikit-Learn</span>
+                <span>Random Forest</span>
+                <span>KNN</span>
+                <span>Seaborn</span>
+                <span>Forecasting</span>
+                <span>Lean Six Sigma</span>
+            </div>
         </section>
 
-        <!-- SECCIÓN DE PROYECTOS DE DATA SCIENCE -->
-        <section class="card">
-            <h3>Data Science Projects</h3>
+        <!-- FEATURED PROJECTS -->
+        <section id="projects" class="card fade-in">
+            <h3><i class="fa-solid fa-code"></i> Featured Data Science Projects</h3>
             <div class="project-grid">
                 <div class="project-box">
-                    <h4>1. EDA & Financial Forecasting Dashboard</h4>
-                    <p>Análisis Exploratorio de Datos (EDA) aplicado a optimización de presupuestos operativos y reducción de variabilidad.</p>
+                    <div class="proj-icon"><i class="fa-solid fa-chart-pie"></i></div>
+                    <h4>Financial Forecasting & EDA</h4>
+                    <p>Exploratory data analysis applied to optimize operational budgets and minimize financial variance.</p>
                 </div>
                 <div class="project-box">
-                    <h4>2. Customer Churn Prediction (Random Forest)</h4>
-                    <p>Modelo predictivo para retención de clientes en entornos BPO bilingües de alta exigencia.</p>
+                    <div class="proj-icon"><i class="fa-solid fa-brain"></i></div>
+                    <h4>Customer Churn (Random Forest)</h4>
+                    <p>Predictive classification model designed to improve retention strategies in high-performance BPO environments.</p>
                 </div>
                 <div class="project-box">
-                    <h4>3. Operational Segmentation (KNN)</h4>
-                    <p>Agrupación de rendimiento de proyectos de investigación de mercados para mejora continua.</p>
+                    <div class="proj-icon"><i class="fa-solid fa-network-wired"></i></div>
+                    <h4>Project Segmentation (KNN)</h4>
+                    <p>Distance-based clustering of market research operations to streamline resource allocation.</p>
                 </div>
             </div>
         </section>
 
-        <!-- SECCIÓN: TRY MY SKILLS! (DASHBOARD INTERACTIVO) -->
-        <section class="card highlight-card" id="try-skills">
-            <h3>🚀 Try my Skills! (Interactive Business Dashboard & ML)</h3>
-            <p>Sube cualquier archivo en formato <strong>CSV</strong> (por ejemplo, datos de ventas, operaciones o clientes). El sistema ejecutará automáticamente un análisis exploratorio (EDA), estadísticas descriptivas, un modelo de Machine Learning (Random Forest / KNN) y generará insights de negocio en tiempo real.</p>
+        <!-- TRY MY SKILLS INTERACTIVE SECTION -->
+        <section class="card highlight-card fade-in" id="try-skills">
+            <div class="section-header">
+                <h3><i class="fa-solid fa-rocket"></i> Try my Skills!</h3>
+                <span class="live-badge">Live ML Pipeline</span>
+            </div>
+            <p>Upload any business or operational dataset in <strong>CSV format</strong>. My automated pipeline will instantly execute a full Data Health Audit, Statistical Summary, Feature Correlation Heatmap, and a dual Machine Learning benchmark (Random Forest vs KNN) yielding actionable business insights.</p>
 
-            <form action="/analyze" method="POST" enctype="multipart/form-data" class="upload-form">
-                <input type="file" name="dataset" accept=".csv" required>
-                <button type="submit" class="btn">Generar Dashboard Analítico</button>
+            <form action="/analyze" method="POST" enctype="multipart/form-data" class="upload-box">
+                <div class="file-drop-area">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    <span>Drag & drop your CSV file here or <strong>browse</strong></span>
+                    <input type="file" name="dataset" accept=".csv" required onchange="updateFileName(this)">
+                </div>
+                <div id="file-name" class="file-name-display"></div>
+                <button type="submit" class="btn btn-primary pulse-btn"><i class="fa-solid fa-microchip"></i> Run Business Dashboard</button>
             </form>
         </section>
     </main>
 
     <footer>
-        <p>© 2026 Francisco López. Built with Python, Flask, HTML & CSS.</p>
+        <p>© 2026 Francisco López. Designed with Python, Flask, HTML & CSS.</p>
     </footer>
+
+    <script>
+        function updateFileName(input) {
+            const display = document.getElementById('file-name');
+            if (input.files && input.files[0]) {
+                display.innerHTML = `<i class="fa-solid fa-file-csv"></i> Selected: <strong>${input.files[0].name}</strong>`;
+            }
+        }
+    </script>
 </body>
 </html>
