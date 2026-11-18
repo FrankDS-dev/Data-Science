@@ -130,6 +130,7 @@ def analyze():
             ml_report = f"<p>Could not execute full ML pipeline due to feature constraints: {ml_err}</p>"
 
         # --- 4. RENDER DEEP ANALYTICAL DASHBOARD ---
+# --- 4. RENDER DEEP ANALYTICAL DASHBOARD ---
         return f"""
         <!DOCTYPE html>
         <html lang="en">
@@ -138,13 +139,15 @@ def analyze():
             <title>Executive Data Science & Business Intelligence Dashboard</title>
             <link rel="stylesheet" href="{url_for('static', filename='style.css')}">
             <style>
-                body {{ padding: 30px; background: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }}
-                .dash-container {{ max-width: 1000px; margin: auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }}
+                body {{ padding: 30px; background: #090d16; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }}
+                .dash-container {{ max-width: 1000px; margin: auto; background: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); color: #1e293b; }}
+                .dash-container h1, .dash-container h3, .dash-container p, .dash-container li, .dash-container td, .dash-container th {{ color: #1e293b !important; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 25px; }}
                 th, td {{ padding: 10px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 0.95rem; }}
-                th {{ background-color: #1e293b; color: white; }}
-                .img-fluid {{ max-width: 100%; height: auto; border-radius: 6px; border: 1px solid #cbd5e1; }}
-                .back-btn {{ display: inline-block; margin-top: 30px; padding: 12px 25px; background: #2563eb; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; }}
+                th {{ background-color: #1e293b; color: white !important; }}
+                .img-fluid {{ max-width: 100%; height: auto; border-radius: 6px; border: 1px solid #cbd5e1; margin-top: 10px; }}
+                .alert-info {{ background: #eff6ff; border-left: 4px solid #2563eb; padding: 15px; border-radius: 6px; margin-top: 20px; }}
+                .back-btn {{ display: inline-block; margin-top: 30px; padding: 12px 25px; background: #2563eb; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; transition: background 0.2s; }}
                 .back-btn:hover {{ background: #1d4ed8; }}
             </style>
         </head>
