@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Francisco López | Data Science & Operations Portfolio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- HEADER / PRESENTACIÓN -->
+    <header class="hero">
+        <div class="container">
+            <h1>Francisco López</h1>
+            <h2>Operations Management & Data Science Portfolio</h2>
+            <p>Economics graduate with a Finance background, combining robust operational leadership (Budgets of $100k-$200k, 200+ indirect reports at Teleperformance, NIQ neuroscience projects) with advanced data-driven analytical skills.</p>
+            <div class="contact-info">
+                <span>📧 frankelquedoy@outlook.com</span> |
+                <span>📱 +52 55 4387 6402</span> |
+                <span>📍 México (Remote)</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- SECCIÓN DE COMPETENCIAS Y EXPERIENCIA -->
+        <section class="card">
+            <h3>Core Competencies & Technology</h3>
+            <p><strong>Data & Programming:</strong> Python (Pandas, Matplotlib, Seaborn, Scikit-learn, Sweetviz), R/RStudio, JavaScript, HTML, PHP.</p>
+            <p><strong>Operations:</strong> Forecasting, Budget Tracking, Resource Planning, Lean Six Sigma Yellow Belt, CX Strategy, KPIs.</p>
+        </section>
+
+        <!-- SECCIÓN DE PROYECTOS DE DATA SCIENCE -->
+        <section class="card">
+            <h3>Data Science Projects</h3>
+            <div class="project-grid">
+                <div class="project-box">
+                    <h4>1. EDA & Financial Forecasting Dashboard</h4>
+                    <p>Análisis Exploratorio de Datos (EDA) aplicado a optimización de presupuestos operativos y reducción de variabilidad.</p>
+                </div>
+                <div class="project-box">
+                    <h4>2. Customer Churn Prediction (Random Forest)</h4>
+                    <p>Modelo predictivo para retención de clientes en entornos BPO bilingües de alta exigencia.</p>
+                </div>
+                <div class="project-box">
+                    <h4>3. Operational Segmentation (KNN)</h4>
+                    <p>Agrupación de rendimiento de proyectos de investigación de mercados para mejora continua.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: TRY MY SKILLS! (DASHBOARD INTERACTIVO) -->
+        <section class="card highlight-card" id="try-skills">
+            <h3>🚀 Try my Skills! (Interactive Business Dashboard & ML)</h3>
+            <p>Sube cualquier archivo en formato <strong>CSV</strong> (por ejemplo, datos de ventas, operaciones o clientes). El sistema ejecutará automáticamente un análisis exploratorio (EDA), estadísticas descriptivas, un modelo de Machine Learning (Random Forest / KNN) y generará insights de negocio en tiempo real.</p>
+
+            <form action="/analyze" method="POST" enctype="multipart/form-data" class="upload-form">
+                <input type="file" name="dataset" accept=".csv" required>
+                <button type="submit" class="btn">Generar Dashboard Analítico</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 Francisco López. Built with Python, Flask, HTML & CSS.</p>
+    </footer>
+</body>
+</html>
