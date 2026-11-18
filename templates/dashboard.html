@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Data Science & Business Intelligence Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .dash-main { max-width: 1100px; margin: 120px auto 80px auto; padding: 0 20px; }
+        .dash-card { background: var(--card-bg); backdrop-filter: blur(16px); border: 1px solid var(--border-color); border-radius: 16px; padding: 40px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); color: var(--text-main); }
+        .dash-card h2, .dash-card h3 { font-family: 'Outfit', sans-serif; color: white; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .dash-card h2 i, .dash-card h3 i { color: var(--primary); }
+        .table-responsive { overflow-x: auto; margin-top: 15px; margin-bottom: 25px; }
+        table.dataframe { width: 100%; border-collapse: collapse; text-align: left; }
+        table.dataframe th, table.dataframe td { padding: 12px 15px; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; color: var(--text-main); }
+        table.dataframe th { background-color: rgba(59, 130, 246, 0.1); color: #60a5fa; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; }
+        .img-fluid { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border-color); margin-top: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .ml-box { background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); padding: 25px; border-radius: 12px; margin-top: 20px; }
+        .ml-box ul { margin-left: 20px; color: var(--text-muted); }
+        .ml-box li { margin-bottom: 8px; }
+        .back-btn { display: inline-flex; align-items: center; gap: 10px; margin-top: 20px; padding: 12px 25px; background: var(--primary); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 20px var(--primary-glow); transition: transform 0.2s; }
+        .back-btn:hover { transform: translateY(-2px); background: #2563eb; }
+    </style>
+</head>
+<body>
+    <!-- BACKGROUND GLOW EFFECTS -->
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <span class="logo">FL<span class="dot">.</span></span>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/#projects">Projects</a>
+                <a href="/#try-skills" class="nav-cta">Try my Skills!</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN DASHBOARD CONTENT -->
+    <main class="dash-main">
+        <div class="dash-card">
+            <h2><i class="fa-solid fa-chart-pie"></i> Executive Business & Data Science Insights</h2>
+            <p style="color: var(--text-muted);"><strong>Analyzed Dataset:</strong> {{ filename }} | <strong>Total Observations:</strong> {{ num_rows }} rows | <strong>Features:</strong> {{ num_cols }} columns</p>
+        </div>
+
+        <!-- 1. EDA & HEALTH AUDIT -->
+        <div class="dash-card">
+            <h3><i class="fa-solid fa-stethoscope"></i> 1. Structural EDA & Data Health Audit</h3>
+            <p style="color: var(--text-muted);">Dataset dimensionality and data quality assessment to guarantee operational reliability.</p>
+            <ul style="color: var(--text-muted); margin-left: 20px;">
+                <li><strong>Rows & Columns:</strong> {{ num_rows }} records across {{ num_cols }} attributes.</li>
+                <li><strong>Missing Values Status:</strong> Checked globally. Clean features directly optimize forecasting models.</li>
+            </ul>
+            <div style="margin-top: 15px; color: var(--text-main);">
+                {{ health_html | safe }}
+            </div>
+        </div>
+
+        <!-- 2. STATISTICAL SUMMARY -->
+        <div class="dash-card">
+            <h3><i class="fa-solid fa-table-cells"></i> 2. Statistical Summary & Variance Analysis</h3>
+            <div class="table-responsive">
+                {{ summary_stats | safe }}
+            </div>
+        </div>
+
+        <!-- 3. VISUAL DATA ANALYSIS -->
+        <div class="dash-card">
+            <h3><i class="fa-solid fa-chart-line"></i> 3. Visual Data Analysis & Correlations</h3>
+            {{ plots_html | safe }}
+        </div>
+
+        <!-- 4. PREDICTIVE MODELING -->
+        <div class="dash-card">
+            <h3><i class="fa-solid fa-brain"></i> 4. Predictive Modeling & Business Intelligence</h3>
+            <div class="ml-box">
+                {{ ml_report | safe }}
+            </div>
+
+            <a href="/" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back to Portfolio</a>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2026 Francisco López. Designed with Python, Flask, HTML & CSS.</p>
+    </footer>
+</body>
+</html>
